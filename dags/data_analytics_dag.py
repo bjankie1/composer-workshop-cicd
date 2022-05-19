@@ -26,9 +26,9 @@ from airflow.utils.task_group import TaskGroup
 PROJECT_NAME = "{{var.value.gcp_project}}"
 
 # BigQuery configs
-BQ_DESTINATION_DATASET_NAME = "holiday_weather_bj"
-BQ_DESTINATION_TABLE_NAME = "holidays_weather_bj_joined"
-BQ_NORMALIZED_TABLE_NAME = "holidays_weather_bj_normalized"
+BQ_DESTINATION_DATASET_NAME = "holiday_weather"
+BQ_DESTINATION_TABLE_NAME = "holidays_weather_joined"
+BQ_NORMALIZED_TABLE_NAME = "holidays_weather_normalized"
 
 
 PYSPARK_JAR = "gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar"
@@ -58,10 +58,7 @@ default_dag_args = {
     # To email on failure or retry set 'email' arg to your email and enable
     # emailing here.
     "email_on_failure": False,
-    "email_on_retry": False,
-    # If a task fails, retry it once after waiting at least 5 minutes
-    "retries": 1,
-    "retry_delay": datetime.timedelta(minutes=5),
+    "email_on_retry": False
 }
 
 with models.DAG(
@@ -100,7 +97,7 @@ with models.DAG(
             # Specifically query a Chicago weather station
             WEATHER_HOLIDAYS_JOIN_QUERY = f"""
             SELECT Holidays.Date, Holiday, id, element, value
-            FROM `{PROJECT_NAME}.holiday_weather_bj.holidays` AS Holidays
+            FROM `{PROJECT_NAME}.holiday_weather.holidays` AS Holidays
             JOIN (SELECT id, date, element, value FROM {BQ_DATASET_NAME} AS Table WHERE Table.element="TMAX" AND Table.id="USW00094846") AS Weather
             ON Holidays.Date = Weather.Date;
             """
@@ -119,7 +116,7 @@ with models.DAG(
                         "writeDisposition": "WRITE_APPEND",
                     }
                 },
-                location="{{var.value.bq_location}}",
+                location="US",
             )
 
         load_external_dataset >> bq_join_group >> create_batch
