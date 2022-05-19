@@ -97,7 +97,7 @@ with models.DAG(
             # Specifically query a Chicago weather station
             WEATHER_HOLIDAYS_JOIN_QUERY = f"""
             SELECT Holidays.Date, Holiday, id, element, value
-            FROM `{PROJECT_NAME}.holiday_weather.holidays_bj` AS Holidays
+            FROM `{PROJECT_NAME}.holiday_weather_bj.holidays_bj` AS Holidays
             JOIN (SELECT id, date, element, value FROM {BQ_DATASET_NAME} AS Table WHERE Table.element="TMAX" AND Table.id="USW00094846") AS Weather
             ON Holidays.Date = Weather.Date;
             """
