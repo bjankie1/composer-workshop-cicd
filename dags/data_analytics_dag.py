@@ -26,9 +26,9 @@ from airflow.utils.task_group import TaskGroup
 PROJECT_NAME = "{{var.value.gcp_project}}"
 
 # BigQuery configs
-BQ_DESTINATION_DATASET_NAME = "holiday_weather"
-BQ_DESTINATION_TABLE_NAME = "holidays_weather_joined"
-BQ_NORMALIZED_TABLE_NAME = "holidays_weather_normalized"
+BQ_DESTINATION_DATASET_NAME = "holiday_weather_bj"
+BQ_DESTINATION_TABLE_NAME = "holidays_weather_bj_joined"
+BQ_NORMALIZED_TABLE_NAME = "holidays_weather_bj_normalized"
 
 
 PYSPARK_JAR = "gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar"
@@ -100,7 +100,7 @@ with models.DAG(
             # Specifically query a Chicago weather station
             WEATHER_HOLIDAYS_JOIN_QUERY = f"""
             SELECT Holidays.Date, Holiday, id, element, value
-            FROM `{PROJECT_NAME}.holiday_weather.holidays` AS Holidays
+            FROM `{PROJECT_NAME}.holiday_weather_bj.holidays` AS Holidays
             JOIN (SELECT id, date, element, value FROM {BQ_DATASET_NAME} AS Table WHERE Table.element="TMAX" AND Table.id="USW00094846") AS Weather
             ON Holidays.Date = Weather.Date;
             """
