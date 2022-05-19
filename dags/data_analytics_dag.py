@@ -79,7 +79,7 @@ with models.DAG(
         task_id="run_bq_external_ingestion",
         bucket="{{var.value.gcs_bucket}}",
         source_objects=["holidays.csv"],
-        destination_project_dataset_table=f"{BQ_DESTINATION_DATASET_NAME}.holidays",
+        destination_project_dataset_table=f"{BQ_DESTINATION_DATASET_NAME}.holidays_bj",
         source_format="CSV",
         schema_fields=[
             {"name": "Date", "type": "DATE"},
